@@ -1,5 +1,5 @@
 # phprunner
-![GitHub Logo](screenshot/1.png)
+![GitHub Logo](screenshots/1.png)
 
 a simple web based PHP code testing environment 
 
