@@ -1,0 +1,148 @@
+<!doctype html>
+
+<title>CodeMirror: PHP mode</title>
+<meta charset="utf-8"/>
+<link rel="stylesheet" href="mss/codemirror/lib/codemirror.css">
+<style type="text/css">.CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}</style>
+<script src="mss/codemirror/lib/codemirror.js"></script>
+<script src="mss/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="mss/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="mss/codemirror/mode/xml/xml.js"></script>
+<script src="mss/codemirror/mode/javascript/javascript.js"></script>
+<script src="mss/codemirror/mode/css/css.js"></script>
+<script src="mss/codemirror/mode/clike/clike.js"></script>
+<link  href="mss/codemirror/addon/hint/show-hint.css" rel="stylesheet">
+<script src="mss/codemirror/addon/hint/show-hint.js"></script>
+<script src="mss/codemirror/mode/php/php.js"></script>
+<style>
+#run-button {
+  border-radius: 3px;
+  background: #000;
+  transition: 0.5s;
+  opacity:0.5;
+  cursor: pointer;
+  display: block;
+  font-family: verdana;
+  line-height: 14px;
+  margin: 3px 0 0 10px;
+  padding: 8px 13px 9px;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 138px;
+  z-index:1000;
+}
+
+#run-button:hover
+{
+opacity:1;
+}
+
+body
+{
+margin:0px;
+padding:0px;
+}
+
+.CodeMirror 
+{ 
+height:100vh;
+border: none;
+background:rgb(250, 250, 250);
+}
+
+.CodeMirror-gutters {
+  background: rgb(232, 232, 232);
+}
+
+
+
+
+</style>
+
+
+<form target="result" method="POST" action="exe.php">
+<textarea id="code" name="code">
+
+$var = "Hello World! <br/> Yeah I Did Exist!";
+echo $var;
+
+</textarea>
+
+</form>
+
+<a href="javascript:runCode();" id="run-button">Run Code <br>[Ctrl+Enter]</a>
+
+
+
+<script>
+
+
+function utf8_to_b64( str ) {
+  return window.btoa(unescape(encodeURIComponent( str )));
+}
+
+function b64_to_utf8( str ) {
+  return decodeURIComponent(escape(window.atob( str )));
+}
+
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return b64_to_utf8(c.substring(name.length,c.length));
+    }
+    return "";
+}
+
+function setCookie(cname, cvalue, exdays) {
+	cvalue=utf8_to_b64(cvalue);
+	var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+
+document.body.onload=function(){
+var code=getCookie('PHP_RUNNER_CODE');
+if(code!="")
+	editor.setValue(code);
+}
+
+
+function runCode(){
+document.cookie='';
+setCookie('PHP_RUNNER_CODE',editor.getValue(),100);
+document.forms[0].submit();
+}
+
+
+function keyEvent(e) {
+if (e.ctrlKey && e.keyCode == 13)
+	runCode();
+}
+
+var editor= CodeMirror.fromTextArea(document.getElementById("code"), {
+	lineNumbers: true,
+	//	mode: {name: "php", phpOpen: true},
+	mode: 'application/x-httpd-php-open',
+	indentUnit: 4,
+	indentWithTabs: true,
+	enterMode: "keep",
+	tabMode: "shift",
+	smartIndent: true,
+	fixedGutter : true,
+	extraKeys: {"Ctrl-Space": "autocomplete"}
+});
+CodeMirror.defineMIME("application/x-httpd-php-open", {name: "php", phpOpen: true}); 
+
+document.addEventListener('keydown', keyEvent, false);
+
+</script>
